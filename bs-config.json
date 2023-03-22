@@ -1,0 +1,13 @@
+{
+    "port": 3000,
+    "files": [
+        "./public/**/*.*",
+        "./dist/**/*.*"
+    ],
+    "server": {
+        "baseDir": "./public",
+        "routes": {
+            "/dist": "./dist"
+        }
+    }
+}
