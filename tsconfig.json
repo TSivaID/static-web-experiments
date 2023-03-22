@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "nodenext",
+        "strict": true,
+        "experimentalDecorators": true,
+        "isolatedModules": true
+    }
+}
