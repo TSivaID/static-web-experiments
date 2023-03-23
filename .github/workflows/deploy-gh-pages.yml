@@ -34,9 +34,15 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Upload built files as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: website
+          path: dist
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          folder: dist
+          artifact: website
