@@ -22,6 +22,8 @@ jobs:
         run: npm ci
 
       - name: Build project
+        env:
+          PUBLIC_URL: https://tsivaid.github.io/static-web-experiments
         run: npm run build:prod
 
       - name: Deploy to GitHub Pages
