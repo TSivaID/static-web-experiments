@@ -22,6 +22,8 @@ jobs:
         run: npm ci
 
       - name: Build project
+        env:
+          PUBLIC_URL: ${{ vars.PUBLIC_URL }}
         run: npm run build:prod
 
       - name: Deploy to GitHub Pages
