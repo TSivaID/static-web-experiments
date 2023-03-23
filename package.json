@@ -10,6 +10,7 @@
   "scripts": {
     "start": "parcel",
     "build": "parcel build",
+    "build:prod": "parcel build --public-url $PUBLIC_URL",
     "check": "tsc --noEmit"
   },
   "keywords": [
