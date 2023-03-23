@@ -4,7 +4,8 @@
   "private": "true",
   "description": "An analytics module using TypeScript",
   "source": [
-    "src/index.html"
+    "src/index.html",
+    "src/404.html"
   ],
   "browserslist": "> 0.5%, last 10 versions, not dead",
   "scripts": {
