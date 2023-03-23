@@ -23,7 +23,7 @@ jobs:
 
       - name: Build project
         env:
-          PUBLIC_URL: ${{ vars.PUBLIC_URL }}
+          PUBLIC_URL: https://tsivaid.github.io/static-web-experiments
         run: npm run build:prod
 
       - name: Deploy to GitHub Pages
