@@ -1,5 +1,5 @@
 import { YourAnalyticsClass } from './analytics';
-import {  checkAndSetAnonymousId } from './create_anonymous_user_id';
+import { checkAndSetAnonymousId } from './create_anonymous_user_id';
 import { checkAndSetSessionId, initResetTimeout } from './set_session_id';
 
 const analytics = new YourAnalyticsClass();
@@ -8,33 +8,68 @@ checkAndSetAnonymousId();
 checkAndSetSessionId();
 initResetTimeout();
 
+function setCookie(name: string, value: string, days: number): void {
+  const date = new Date();
+  date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+  const expires = '; expires=' + date.toUTCString();
+  document.cookie = name + '=' + value + expires + '; path=/';
+}
+
+function getCookie(name: string): string | null {
+  const nameWithEq = name + '=';
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const cookieArray = decodedCookie.split(';');
+
+  for (let cookie of cookieArray) {
+    while (cookie.charAt(0) === ' ') {
+      cookie = cookie.substring(1);
+    }
+    if (cookie.indexOf(nameWithEq) === 0) {
+      return cookie.substring(nameWithEq.length, cookie.length);
+    }
+  }
+  return null;
+}
+
 function initModal() {
-  const modal = document.getElementById("subscription-modal") as HTMLElement;
-  const showModalButton = document.getElementById("show-modal") as HTMLButtonElement;
-  const closeButton = document.querySelector(".close") as HTMLElement;
+  const modal = document.getElementById('subscription-modal') as HTMLElement;
+  const showModalButton = document.getElementById('show-modal') as HTMLButtonElement;
+  const closeButton = document.querySelector('.close') as HTMLElement;
 
   if (!modal || !showModalButton || !closeButton) {
     return;
   }
 
+  const sessionCount = parseInt(getCookie('session_count') || '0', 10);
+  const subscribed = getCookie('subscribed') === 'true';
+
   showModalButton.onclick = () => {
-    modal.style.display = "block";
+    modal.style.display = 'block';
   };
 
   closeButton.onclick = () => {
-    modal.style.display = "none";
+    modal.style.display = 'none';
   };
 
   window.onclick = (event: MouseEvent) => {
     if (event.target === modal) {
-      modal.style.display = "none";
+      modal.style.display = 'none';
     }
   };
 
-  window.onload = () => {
-    modal.style.display = "block";
-    analytics.trackEvent('Page loaded');
-  };
+  // Replace this with your actual newsletter form submission event
+  document.getElementById('newsletter-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    setCookie('subscribed', 'true', 365);
+    modal.style.display = 'none';
+  });
+
+  // Show the modal only for 1st and 5th visit, and if the user has not subscribed
+  if (!subscribed && (sessionCount === 1 || sessionCount === 5)) {
+    modal.style.display = 'block';
+  } else {
+    modal.style.display = 'none';
+  }
 }
 
 initModal();

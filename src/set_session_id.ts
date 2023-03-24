@@ -32,7 +32,23 @@ function getCookie(name: string): string | null {
 export function checkAndSetSessionId(): void {
   const sessionId = getCookie('session_id');
   if (!sessionId) {
-    setCookie('session_id', uuidv4(), null);
+    // Generate a new session_id and set the cookie
+    const newSessionId = uuidv4();
+    setCookie('session_id', newSessionId, null);
+    setCookie('last_session_id', newSessionId, 30 * 24 * 60 * 60 * 1000);
+
+    // Increment the sessionCount cookie
+    const sessionCount = parseInt(getCookie('session_count') || '0', 10);
+    const newSessionCount = (sessionCount + 1).toString()
+    setCookie('session_count', newSessionCount, 30 * 24 * 60 * 60 * 1000);
+  } else {
+    // Increment the sessionCount only if the last session_id is different than the current one
+    const lastSessionId = getCookie('last_session_id');
+    if (lastSessionId !== sessionId) {
+      const sessionCount = parseInt(getCookie('session_count') || '0', 10);
+      const newSessionCount = (sessionCount + 1).toString()
+      setCookie('session_count', newSessionCount, 30 * 24 * 60 * 60 * 1000);
+    }
   }
 }
 
@@ -46,7 +62,14 @@ export function initResetTimeout() {
     }
 
     timeout = setTimeout(() => {
+      // Save the last_session_id before deleting the session_id
+      const sessionId = getCookie('session_id');
+      if (sessionId) {
+        setCookie('last_session_id', sessionId, 30 * 24 * 60 * 60 * 1000);
+      }
+
       setCookie('session_id', '', -1); // Delete the session_id cookie
+      checkAndSetSessionId(); // Create a new session_id after the old one has been deleted
     }, 30 * 60 * 1000); // 30 minutes
   }
 
