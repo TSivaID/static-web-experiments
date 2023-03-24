@@ -5,7 +5,9 @@
   "description": "An analytics module using TypeScript",
   "source": [
     "src/index.html",
-    "src/404.html"
+    "src/404.html",
+    "src/news.html",
+    "src/story.html"
   ],
   "browserslist": "> 0.5%, last 10 versions, not dead",
   "scripts": {
@@ -33,5 +35,9 @@
   },
   "engines": {
     "node": ">= 14"
+  },
+  "dependencies": {
+    "@types/uuid": "^9.0.1",
+    "uuid": "^9.0.0"
   }
 }
