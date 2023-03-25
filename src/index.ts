@@ -42,6 +42,7 @@ function initModal() {
 
   const sessionCount = parseInt(getCookie('session_count') || '0', 10);
   const subscribed = getCookie('subscribed') === 'true';
+  const closed = getCookie('subscribeModalClosed') === 'true';
 
   showModalButton.onclick = () => {
     modal.style.display = 'block';
@@ -49,6 +50,7 @@ function initModal() {
 
   closeButton.onclick = () => {
     modal.style.display = 'none';
+    setCookie('subscribeModalClosed', 'true', 1);
   };
 
   window.onclick = (event: MouseEvent) => {
@@ -65,7 +67,7 @@ function initModal() {
   });
 
   // Show the modal only for 1st and 5th visit, and if the user has not subscribed
-  if (!subscribed && (sessionCount === 1 || sessionCount === 5)) {
+  if (!subscribed && !closed && (sessionCount === 1 || sessionCount === 5)) {
     modal.style.display = 'block';
   } else {
     modal.style.display = 'none';
