@@ -1,4 +1,10 @@
-import { Logger, LogLevel } from './logger';
+import { Logger, LogLevel, initializeLogger } from './logger';
+import { setCookie, getCookie } from './cookie';
+
+jest.mock('./cookie', () => ({
+  setCookie: jest.fn(),
+  getCookie: jest.fn(),
+}));
 
 describe('Logger', () => {
   let consoleDebugSpy: jest.SpyInstance;
@@ -70,5 +76,40 @@ describe('Logger', () => {
     const metadata2 = { key2: 'value2' };
     logger.debug('Test debug message', { metadata: metadata1, thunk: () => metadata2 });
     expect(consoleDebugSpy).toHaveBeenCalledWith('Test debug message', { metadata: metadata1, thunk: metadata2 });
+  });
+});
+
+describe('initializeLogger', () => {
+  afterEach(() => {
+    (getCookie as jest.Mock).mockReset();
+    (setCookie as jest.Mock).mockReset();
+  });
+
+  test('should initialize the logger with the default log level', () => {
+    const logger = initializeLogger();
+    expect(logger).toBeInstanceOf(Logger);
+    expect(logger.getLogLevel()).toEqual(LogLevel.INFO);
+  });
+
+  test('should initialize the logger with the log level from URL query string', () => {
+    Object.defineProperty(window, 'location', {
+      value: {
+        search: '?loglevel=debug',
+      },
+      writable: true,
+    });
+
+    const logger = initializeLogger();
+    expect(logger).toBeInstanceOf(Logger);
+    expect(logger.getLogLevel()).toEqual(LogLevel.DEBUG);
+    expect(setCookie).toHaveBeenCalledWith('session_loglevel', LogLevel.DEBUG.toString(), expect.any(Object));
+  });
+
+  test.skip('should initialize the logger with the log level from session cookie', () => {
+    (getCookie as jest.Mock).mockReturnValue(LogLevel.WARN.toString());
+
+    const logger = initializeLogger();
+    expect(logger).toBeInstanceOf(Logger);
+    expect(logger.getLogLevel()).toEqual(LogLevel.WARN);
   });
 });

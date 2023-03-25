@@ -32,6 +32,8 @@
  * ```
  */
 
+import { getCookie, setCookie } from './cookie';
+
 /**
  * LogLevel represents the available logging levels.
  */
@@ -50,6 +52,14 @@ export class Logger {
 
   constructor(logLevel: LogLevel) {
     this.logLevel = logLevel;
+  }
+
+  /**
+   * Gets the current log level.
+   * @returns {LogLevel} The current log level.
+   */
+  public getLogLevel(): LogLevel {
+    return this.logLevel;
   }
 
   /**
@@ -118,7 +128,10 @@ export class Logger {
           ? 'error'
           : 'info';
       try {
-        logMetadata = { ...({ metadata: options?.metadata } || {}), ...(options?.thunk ? { thunk: options.thunk() } : {}) };
+        logMetadata = {
+          ...({ metadata: options?.metadata } || {}),
+          ...(options?.thunk ? { thunk: options.thunk() } : {}),
+        };
       } catch (error) {
         console.error('Error while logging message', error);
       }
@@ -126,3 +139,72 @@ export class Logger {
     }
   }
 }
+
+/**
+ * Returns the log level from the URL query string.
+ * @returns {LogLevel} The log level.
+ */
+function getLogLevelFromUrl(): LogLevel | undefined {
+  const urlParams = new URLSearchParams(window.location.search);
+  const logLevelParam = urlParams.get('loglevel');
+
+  if (logLevelParam) {
+    const logLevel = logLevelParam.toLowerCase();
+    if (logLevel === 'debug') return LogLevel.DEBUG;
+    if (logLevel === 'info') return LogLevel.INFO;
+    if (logLevel === 'warn') return LogLevel.WARN;
+    if (logLevel === 'error') return LogLevel.ERROR;
+  }
+
+  return undefined;
+}
+
+/**
+ * Saves the log level to a session cookie.
+ * @param {LogLevel} logLevel - The log level.
+ */
+function saveLogLevelToSessionCookie(logLevel: LogLevel) {
+  setCookie('session_loglevel', logLevel.toString(), { path: '/', sameSite: 'strict' });
+}
+
+/**
+ * Returns the log level from the session cookie.
+ * @returns {LogLevel} The log level.
+ * @returns {undefined} If the log level is not found in the session cookie.
+ */
+function getLogLevelFromSessionCookie(): LogLevel | undefined {
+  const logLevelStr = getCookie('session_loglevel');
+
+  if (logLevelStr) {
+    const logLevel = parseInt(logLevelStr);
+    if (LogLevel[logLevel]) {
+      return logLevel;
+    }
+  }
+
+  return undefined;
+}
+
+/**
+ * Initializes the logger.
+ * @returns {Logger} The logger.
+ * @returns {undefined} If the log level is not found in the session cookie.
+ */
+export function initializeLogger(): Logger {
+  let logLevel: LogLevel = LogLevel.INFO; // Default log level
+
+  const urlLogLevel = getLogLevelFromUrl();
+  if (urlLogLevel !== undefined) {
+    logLevel = urlLogLevel;
+    saveLogLevelToSessionCookie(logLevel);
+  } else {
+    const sessionLogLevel = getLogLevelFromSessionCookie();
+    if (sessionLogLevel !== undefined) {
+      logLevel = sessionLogLevel;
+    }
+  }
+
+  return new Logger(logLevel);
+}
+
+export const logger = initializeLogger();
