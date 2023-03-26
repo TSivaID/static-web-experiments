@@ -21,6 +21,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run Lint
+        run: npm run lint
+
+      - name: Run Unit tests
+        run: npm test
+
       - name: Build project
         env:
           PUBLIC_URL: https://tsivaid.github.io/static-web-experiments

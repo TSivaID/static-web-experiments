@@ -5,13 +5,13 @@ import { initModal } from './components/subscribe_newsletter';
 import { initConsentBanner } from './components/consent_banner';
 
 const analytics = new YourAnalyticsClass();
+analytics.trackEvent('page_load');
 
 checkAndSetAnonymousId();
 checkAndSetSessionId();
 initInactivityTimer();
 initModal();
 initConsentBanner();
-
 
 document.addEventListener('DOMContentLoaded', () => {
   // const urlParams = new URLSearchParams(window.location.search);

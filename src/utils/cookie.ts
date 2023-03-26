@@ -70,7 +70,7 @@ export function getCookie(name: string): string | null {
   const cookies = document.cookie.split(';');
 
   for (const cookie of cookies) {
-    let trimmedCookie = cookie.trim();
+    const trimmedCookie = cookie.trim();
     if (trimmedCookie.startsWith(cookieName)) {
       return decodeURIComponent(trimmedCookie.slice(cookieName.length));
     }

@@ -16,7 +16,8 @@
     "build:prod": "parcel build --public-url $PUBLIC_URL",
     "check": "tsc --noEmit",
     "format": "prettier --write 'src/**/*.{ts,tsx,js,jsx,json,md}'",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint --ext .ts,.tsx,.js,.jsx ."
   },
   "keywords": [
     "analytics",

@@ -13,10 +13,10 @@ describe('Logger', () => {
   let consoleErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation(() => {});
-    consoleInfoSpy = jest.spyOn(console, 'info').mockImplementation(() => {});
-    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation(() => {}); // eslint-disable-line
+    consoleInfoSpy = jest.spyOn(console, 'info').mockImplementation(() => {}); // eslint-disable-line
+    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {}); // eslint-disable-line
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {}); // eslint-disable-line
   });
 
   afterEach(() => {
