@@ -128,14 +128,17 @@ export class Logger {
           ? 'error'
           : 'info';
       try {
-        logMetadata = {
-          ...({ metadata: options?.metadata } || {}),
-          ...(options?.thunk ? { thunk: options.thunk() } : {}),
-        };
+        const metaData = options?.metadata ? { metadata: { ...options.metadata } } : undefined;
+        const thunkData = options?.thunk ? { thunk: { ...options.thunk() } } : undefined;
+        logMetadata = metaData || thunkData ? { ...(metaData || {}), ...(thunkData || {}) } : undefined;
       } catch (error) {
         console.error('Error while logging message', error);
       }
-      console[cleanedLogLevel](message, logMetadata);
+      if (logMetadata) {
+        console[cleanedLogLevel](message, logMetadata);
+      } else {
+        console[cleanedLogLevel](message);
+      }
     }
   }
 }

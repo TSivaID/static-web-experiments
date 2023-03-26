@@ -29,25 +29,25 @@ describe('Logger', () => {
   it('should log debug message when log level is set to DEBUG', () => {
     const logger = new Logger(LogLevel.DEBUG);
     logger.debug('Test debug message');
-    expect(consoleDebugSpy).toHaveBeenCalledWith('Test debug message', {});
+    expect(consoleDebugSpy).toHaveBeenCalledWith('Test debug message');
   });
 
   it('should log info message when log level is set to INFO', () => {
     const logger = new Logger(LogLevel.INFO);
     logger.info('Test info message');
-    expect(consoleInfoSpy).toHaveBeenCalledWith('Test info message', {});
+    expect(consoleInfoSpy).toHaveBeenCalledWith('Test info message');
   });
 
   it('should log warning message when log level is set to WARN', () => {
     const logger = new Logger(LogLevel.WARN);
     logger.warn('Test warning message');
-    expect(consoleWarnSpy).toHaveBeenCalledWith('Test warning message', {});
+    expect(consoleWarnSpy).toHaveBeenCalledWith('Test warning message');
   });
 
   it('should log error message when log level is set to ERROR', () => {
     const logger = new Logger(LogLevel.ERROR);
     logger.error('Test error message');
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Test error message', {});
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Test error message');
   });
 
   it('should not log debug message when log level is set to INFO', () => {
