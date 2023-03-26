@@ -1,8 +1,8 @@
 import { YourAnalyticsClass } from './analytics';
-import { checkAndSetAnonymousId } from './identity/create_anonymous_user_id';
-import { checkAndSetSessionId, initInactivityTimer } from './identity/set_session_id';
-import { initModal } from './components/subscribe_newsletter';
-import { initConsentBanner } from './components/consent_banner';
+import { checkAndSetAnonymousId } from './identity/create-anonymous-user-id';
+import { checkAndSetSessionId, initInactivityTimer } from './identity/set-session-id';
+import { initModal } from './components/subscribe-newsletter';
+import { initConsentBanner } from './components/consent-banner';
 
 const analytics = new YourAnalyticsClass();
 analytics.trackEvent('page_load');
