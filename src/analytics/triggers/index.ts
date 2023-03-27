@@ -13,7 +13,7 @@ import { logger } from '../../utils/logger';
 
 interface ITrigger {
   name: string;
-  selector: Element;
+  selector: EventTarget | null;
   addEventListener: (event: string, callback: (event: Event) => void) => void;
   removeEventListener: (event: string, callback: (event: Event) => void) => void;
   handler: (event: Event) => void;
@@ -170,13 +170,13 @@ class TriggerVariablesParser {
 
 abstract class Trigger implements ITrigger {
   name: string;
-  selector: HTMLElement;
+  selector: EventTarget;
   analyticsService: AnalyticsService;
   triggerVariableParser = new TriggerVariablesParser();
 
-  constructor(name: string, element: Element, analyticsService: AnalyticsService) {
+  constructor(name: string, element: EventTarget, analyticsService: AnalyticsService) {
     this.name = name;
-    this.selector = element as HTMLElement;
+    this.selector = element;
     this.analyticsService = analyticsService;
   }
 
@@ -207,7 +207,7 @@ abstract class Trigger implements ITrigger {
 }
 
 export class ClickTrigger extends Trigger {
-  constructor(selector: Element, analyticsService: AnalyticsService) {
+  constructor(selector: EventTarget, analyticsService: AnalyticsService) {
     super('click', selector, analyticsService);
   }
 
@@ -223,6 +223,43 @@ export class ClickTrigger extends Trigger {
   }
 }
 
+export class ScrollDepthTrigger extends Trigger {
+  private maxDepth: number;
+  protected shouldEnable: boolean;
+
+  constructor(shouldEnable: boolean, analyticsService: AnalyticsService) {
+    super('scroll', window, analyticsService);
+    this.maxDepth = 0;
+    this.shouldEnable = shouldEnable;
+  }
+
+  initialize() {
+    if (this.shouldEnable) {
+      this.addEventListener();
+      this.trackUnload();
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handler(event: Event): void {
+    const currentDepth = window.scrollY;
+    if (currentDepth > this.maxDepth) {
+      this.maxDepth = currentDepth;
+    }
+  }
+
+  private trackUnload(): void {
+    window.addEventListener('beforeunload', () => {
+      if (this.maxDepth > 0) {
+        this.analyticsService.trackEvent('scroll_depth', {
+          // TODO: get target provider from config
+          mock_api_analytics: { maxDepth: this.maxDepth },
+        });
+      }
+    });
+  }
+}
+
 export class TriggerBinder {
   analyticsService: AnalyticsService;
 
@@ -232,6 +269,7 @@ export class TriggerBinder {
 
   initialize() {
     this.bindClickTriggers();
+    new ScrollDepthTrigger(true, this.analyticsService).initialize();
   }
 
   private bindClickTriggers() {
