@@ -85,6 +85,7 @@ class TriggerVariablesParser {
     return {
       event_timestamp: new Date().toISOString(),
       user_agent: window.navigator.userAgent,
+      page_url: window.location.href,
     };
   }
 
