@@ -23,8 +23,8 @@ export class MockApiAnalytics implements IAnalyticsProvider {
   }
 
   async trackEvent(eventName: string, data?: Record<string, unknown>): Promise<void> {
-    if (!data?.beeceptor_analytics) return Promise.resolve();
-    const providerData = { ...data.beeceptor_analytics, useSendBeacon: this.useSendBeacon };
+    if (!data?.mock_api_analytics) return Promise.resolve();
+    const providerData = { ...data.mock_api_analytics, useSendBeacon: this.useSendBeacon };
 
     if (this.useSendBeacon && navigator.sendBeacon) {
       const blob = new Blob([JSON.stringify({ eventName, data: providerData })], { type: 'text/plain' });
