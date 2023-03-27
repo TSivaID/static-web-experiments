@@ -1,4 +1,4 @@
-import { MockApiAnalytics } from './providers/beeceptor-analytics';
+import { MockApiAnalytics } from './providers/mock-api-analytics';
 import { DummyAnalytics } from './providers/dummy-analytics';
 import { AnalyticsService } from './service';
 import { TriggerBinder } from './triggers';
