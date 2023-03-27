@@ -5,9 +5,14 @@ import { TriggerBinder } from './triggers';
 
 export class WebAnalyticsFacade {
   async initialize(options?: Record<string, unknown>): Promise<AnalyticsService> {
-    const beeceptorAnalytics = new BeeceptorAnalytics();
+    const mockApiAnalyticsWithFetch = new BeeceptorAnalytics({ useSendBeacon: false });
+    const mockApiAnalyticsWithSendBeacon = new BeeceptorAnalytics({ useSendBeacon: true });
     const dummyAnalytics = new DummyAnalytics();
-    const analyticsService = new AnalyticsService([beeceptorAnalytics, dummyAnalytics]);
+    const analyticsService = new AnalyticsService([
+      mockApiAnalyticsWithFetch,
+      mockApiAnalyticsWithSendBeacon,
+      dummyAnalytics,
+    ]);
     await analyticsService.initialize(options);
     const triggerBinder = new TriggerBinder(analyticsService);
     triggerBinder.initialize();
