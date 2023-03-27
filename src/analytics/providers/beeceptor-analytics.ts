@@ -1,25 +1,25 @@
 import { IAnalyticsProvider } from './ianalytics-provider';
 import { logger } from '../../utils/logger';
 
-interface BeeceptorAnalyticsConfig {
+interface MockApiAnalyticsConfig {
   useSendBeacon?: boolean;
 }
 
 /**
- * BeeceptorAnalytics is a simple Mock analytics provider that sends events to a
- * Beeceptor endpoint. This is useful for testing analytics in a development environment.
+ * MockApiAnalytics is a simple Mock analytics provider that sends events to a
+ * Mock API endpoint. This is useful for testing analytics in a development environment.
  */
-export class BeeceptorAnalytics implements IAnalyticsProvider {
-  public readonly name = 'BeeceptorAnalytics';
+export class MockApiAnalytics implements IAnalyticsProvider {
+  public readonly name = 'MockApiAnalytics';
   private readonly endpoint: string = 'https://static-web-experiments.free.beeceptor.com/events/';
   private readonly useSendBeacon: boolean;
 
-  constructor(config?: BeeceptorAnalyticsConfig) {
+  constructor(config?: MockApiAnalyticsConfig) {
     this.useSendBeacon = config?.useSendBeacon === true ? true : false;
   }
 
   initialize(): void {
-    logger.info('BeeceptorAnalytics initialized');
+    logger.info('MockApiAnalytics initialized');
   }
 
   async trackEvent(eventName: string, data?: Record<string, unknown>): Promise<void> {
@@ -33,16 +33,16 @@ export class BeeceptorAnalytics implements IAnalyticsProvider {
 
       if (success) {
         logger.info(
-          `BeeceptorAnalytics sent event using sendBeacon: ${eventName} with data: ${JSON.stringify(providerData)}`
+          `MockApiAnalytics sent event using sendBeacon: ${eventName} with data: ${JSON.stringify(providerData)}`
         );
       } else {
-        logger.error(`BeeceptorAnalytics failed to send event using sendBeacon: ${eventName}`);
+        logger.error(`MockApiAnalytics failed to send event using sendBeacon: ${eventName}`);
       }
 
       return Promise.resolve();
     } else {
       try {
-        logger.info(`BeeceptorAnalytics sending event: ${eventName} with data: ${JSON.stringify(providerData)}`);
+        logger.info(`MockApiAnalytics sending event: ${eventName} with data: ${JSON.stringify(providerData)}`);
         const response = await fetch(`${this.endpoint}`, {
           method: 'POST',
           headers: {
@@ -52,11 +52,11 @@ export class BeeceptorAnalytics implements IAnalyticsProvider {
           // keepalive: true,
         });
         if (!response.ok) {
-          logger.error(`BeeceptorAnalytics failed to track event: ${response.statusText}`);
+          logger.error(`MockApiAnalytics failed to track event: ${response.statusText}`);
           return Promise.resolve();
         }
       } catch (error) {
-        logger.error(`BeeceptorAnalytics failed to track event: ${(error as Error).message}`);
+        logger.error(`MockApiAnalytics failed to track event: ${(error as Error).message}`);
         return Promise.resolve();
       }
     }

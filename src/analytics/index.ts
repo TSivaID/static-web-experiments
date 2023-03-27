@@ -1,12 +1,12 @@
-import { BeeceptorAnalytics } from './providers/beeceptor-analytics';
+import { MockApiAnalytics } from './providers/beeceptor-analytics';
 import { DummyAnalytics } from './providers/dummy-analytics';
 import { AnalyticsService } from './service';
 import { TriggerBinder } from './triggers';
 
 export class WebAnalyticsFacade {
   async initialize(options?: Record<string, unknown>): Promise<AnalyticsService> {
-    const mockApiAnalyticsWithFetch = new BeeceptorAnalytics({ useSendBeacon: false });
-    const mockApiAnalyticsWithSendBeacon = new BeeceptorAnalytics({ useSendBeacon: true });
+    const mockApiAnalyticsWithFetch = new MockApiAnalytics({ useSendBeacon: false });
+    const mockApiAnalyticsWithSendBeacon = new MockApiAnalytics({ useSendBeacon: true });
     const dummyAnalytics = new DummyAnalytics();
     const analyticsService = new AnalyticsService([
       mockApiAnalyticsWithFetch,
