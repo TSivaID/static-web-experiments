@@ -1,11 +1,11 @@
-import { YourAnalyticsClass } from './analytics';
+import { WebAnalyticsFacade } from './analytics';
 import { checkAndSetAnonymousId } from './identity/create-anonymous-user-id';
 import { checkAndSetSessionId, initInactivityTimer } from './identity/set-session-id';
 import { initModal } from './components/subscribe-newsletter';
 import { initConsentBanner } from './components/consent-banner';
 
-const analytics = new YourAnalyticsClass();
-analytics.trackEvent('page_load');
+const webAnalytics = new WebAnalyticsFacade();
+webAnalytics.initialize();
 
 checkAndSetAnonymousId();
 checkAndSetSessionId();
