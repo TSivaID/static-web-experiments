@@ -15,7 +15,7 @@ export class BeeceptorAnalytics implements IAnalyticsProvider {
   private readonly useSendBeacon: boolean;
 
   constructor(config?: BeeceptorAnalyticsConfig) {
-    this.useSendBeacon = config?.useSendBeacon || true;
+    this.useSendBeacon = config?.useSendBeacon === true ? true : false;
   }
 
   initialize(): void {
@@ -49,7 +49,7 @@ export class BeeceptorAnalytics implements IAnalyticsProvider {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ eventName, data: providerData }),
-          keepalive: true,
+          // keepalive: true,
         });
         if (!response.ok) {
           logger.error(`BeeceptorAnalytics failed to track event: ${response.statusText}`);
