@@ -15,14 +15,15 @@ export class BeeceptorAnalytics implements IAnalyticsProvider {
 
   async trackEvent(eventName: string, data?: Record<string, unknown>): Promise<void> {
     if (!data?.beeceptor_analytics) return Promise.resolve();
+    const providerData = data.beeceptor_analytics;
     try {
-      logger.info(`BeeceptorAnalytics tracked event: ${eventName} with data: ${JSON.stringify(data)}`);
+      logger.info(`BeeceptorAnalytics sending event: ${eventName} with data: ${JSON.stringify(providerData)}`);
       const response = await fetch(`${this.endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ eventName, data }),
+        body: JSON.stringify({ eventName, data: providerData }),
       });
       if (!response.ok) {
         logger.error(`BeeceptorAnalytics failed to track event: ${response.statusText}`);
