@@ -1,0 +1,51 @@
+function e(e,t,n){return t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}
+/**
+ * @module logger
+ * @version 0.1.0
+ * @author T. Siva <t.siva AT outlook.com>
+ * @license MIT
+ * @description
+ * A simple, flexible, and performant logger for use in the browser.
+ *
+ * The logger provides a way to output messages with different log levels (DEBUG, INFO, WARN, and ERROR)
+ * and allows you to include metadata and a thunk function for lazy evaluation of additional information.
+ *
+ * Thunk functions are useful in scenarios where computing additional information is computationally
+ * expensive or time-consuming. By passing a thunk function, the additional information will only be
+ * computed when the log level condition is met, avoiding unnecessary computation and improving
+ * performance.
+ *
+ * Usage example:
+ * ```
+ * import { Logger, LogLevel } from './utils/logger';
+ *
+ * const logger = new Logger(LogLevel.DEBUG);
+ *
+ * logger.debug('Debug message');
+ * logger.info('Info message', { metadata: { user: 'John Doe' } });
+ * logger.warn('Warning message', { metadata: { errorCode: 123 } });
+ * logger.error('Error message', { metadata: { error: new Error('Something went wrong') }, thunk: () => ({ additionalInfo: 'lazy evaluated info' }) });
+ * ```
+ *
+ * Usage example with only thunk (without metadata):
+ * ```
+ * logger.info('Info message', { thunk: () => ({ user: 'John Doe', action: 'lazy evaluated info' }) });
+ * ```
+ */
+/**
+ * @module cookie
+ * @author T. Siva <t.siva AT outlook.com>
+ * @license MIT
+ * @description
+ * A simple utility module to handle browser cookies with all possible options.
+ *
+ * Usage example:
+ * ```
+ * import { setCookie, getCookie, setSessionCookie } from './cookie';
+ *
+ * setCookie('name', 'John Doe', { maxAge: 3600, path: '/', secure: true });
+ * const name = getCookie('name');
+ * setSessionCookie('session', '12345');
+ * ```
+ */function t(e,t,n){let o=`${encodeURIComponent(e)}=${encodeURIComponent(t)}`;n&&(void 0!==n.maxAge&&(o+=`; max-age=${n.maxAge}`),n.path&&(o+=`; path=${n.path}`),n.domain&&(o+=`; domain=${n.domain}`),n.secure&&(o+="; secure"),n.sameSite&&(o+=`; samesite=${n.sameSite}`)),document.cookie=o}function n(e){const t=encodeURIComponent(e)+"=",n=document.cookie.split(";");for(const e of n){const n=e.trim();if(n.startsWith(t))return decodeURIComponent(n.slice(t.length))}return null}let o;var i;(i=o||(o={}))[i.DEBUG=0]="DEBUG",i[i.INFO=1]="INFO",i[i.WARN=2]="WARN",i[i.ERROR=3]="ERROR";class r{getLogLevel(){return this.logLevel}debug(e,t){this.log(o.DEBUG,e,t)}info(e,t){this.log(o.INFO,e,t)}warn(e,t){this.log(o.WARN,e,t)}error(e,t){this.log(o.ERROR,e,t)}log(e,t,n){if(e>=this.logLevel){let i;const r=e===o.DEBUG?"debug":e===o.INFO?"info":e===o.WARN?"warn":e===o.ERROR?"error":"info";try{const e=n?.metadata?{metadata:{...n.metadata}}:void 0,t=n?.thunk?{thunk:{...n.thunk()}}:void 0;i=e||t?{...e||{},...t||{}}:void 0}catch(e){console.error("Error while logging message",e)}i?console[r](t,i):console[r](t)}}constructor(e){this.logLevel=e}}const s=function(){let e=o.INFO;const i=function(){const e=new URLSearchParams(window.location.search).get("loglevel");if(e){const t=e.toLowerCase();if("debug"===t)return o.DEBUG;if("info"===t)return o.INFO;if("warn"===t)return o.WARN;if("error"===t)return o.ERROR}}();if(void 0!==i)e=i,function(e){t("session_loglevel",e.toString(),{path:"/",sameSite:"strict"})}(e);else{const t=function(){const e=n("session_loglevel");if(e){const t=parseInt(e);if(o[t])return t}}();void 0!==t&&(e=t)}return new r(e)}();class a{initialize(){s.info("BeeceptorAnalytics initialized")}async trackEvent(e,t){if(!t?.beeceptor_analytics)return Promise.resolve();const n={...t.beeceptor_analytics,useSendBeacon:this.useSendBeacon};if(this.useSendBeacon&&navigator.sendBeacon){const t=new Blob([JSON.stringify({eventName:e,data:n})],{type:"text/plain"});return navigator.sendBeacon(`${this.endpoint}`,t)?s.info(`BeeceptorAnalytics sent event using sendBeacon: ${e} with data: ${JSON.stringify(n)}`):s.error(`BeeceptorAnalytics failed to send event using sendBeacon: ${e}`),Promise.resolve()}try{s.info(`BeeceptorAnalytics sending event: ${e} with data: ${JSON.stringify(n)}`);const t=await fetch(`${this.endpoint}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({eventName:e,data:n})});if(!t.ok)return s.error(`BeeceptorAnalytics failed to track event: ${t.statusText}`),Promise.resolve()}catch(e){return s.error(`BeeceptorAnalytics failed to track event: ${e.message}`),Promise.resolve()}}constructor(t){e(this,"name","BeeceptorAnalytics"),e(this,"endpoint","https://static-web-experiments.free.beeceptor.com/events/"),this.useSendBeacon=!0===t?.useSendBeacon}}class c{initialize(){s.info("DummyAnalytics initialized")}async trackEvent(e,t){return t?.dummy_analytics&&s.info(`DummyAnalytics tracked event: ${e} with data: ${JSON.stringify(t.dummy_analytics)}`),Promise.resolve()}constructor(){e(this,"name","DummyAnalytics")}}class l{async initialize(e){this.isInitialized?s.warn("AnalyticsService already initialized"):(await Promise.all(this.analyticsProviders.map((t=>{t.initialize(e),s.info(`AnalyticsService: ${t.name} initialized`)}))),this.isInitialized=!0)}async trackEvent(e,t){s.info(`AnalyticsService.track called with eventName=${e} data=${JSON.stringify(t)}`),await Promise.all(this.analyticsProviders.map((n=>n.trackEvent(e,t))))}constructor(t){e(this,"isInitialized",!1),this.analyticsProviders=t}}class d{getCommonVars(){return{event_timestamp:(new Date).toISOString(),user_agent:window.navigator.userAgent}}getPageVars(){const e=document.querySelector("#page-vars");if(e)try{return JSON.parse(e.innerHTML)}catch(e){return void s.error("Error parsing page-vars")}else s.error("No page-vars found")}getVars(e){const t=this.getCommonVars(),n=this.getPageVars(),o={...n?n.vars:{},...e.vars||{}},i={};for(const n in e.providers){const r=e.providers[n],s={...t};if(r.keys)for(const e of r.keys)Object.prototype.hasOwnProperty.call(o,e)&&(s[e]=o[e]);if(r.extra_keys)for(const e of r.extra_keys)Object.prototype.hasOwnProperty.call(o,e)&&(s[e]=o[e]);if(r.exclude_keys)for(const e of r.exclude_keys)Object.prototype.hasOwnProperty.call(s,e)&&delete s[e];if(r.key_mapping)for(const e in r.key_mapping)if(Object.prototype.hasOwnProperty.call(s,e)){s[r.key_mapping[e]]=s[e],delete s[e]}i[n]=s}return i}}class u{addEventListener(){this.selector.addEventListener(this.name,this.handler.bind(this))}removeEventListener(){this.selector.removeEventListener(this.name,this.handler.bind(this))}getEventConf(e){if(e)try{return JSON.parse(e)}catch(e){return void s.error(`Error parsing eventConf for ${this.name} trigger`)}else s.error(`No eventConf found for ${this.name} trigger`)}constructor(t,n,o){e(this,"triggerVariableParser",new d),this.name=t,this.selector=n,this.analyticsService=o}}class m extends u{handler(e){const t=e?.currentTarget?.dataset?.eventConf,n=this.getEventConf(t);if(n){const e=this.triggerVariableParser.getVars(n);this.analyticsService.trackEvent(n.name,e)}}constructor(e,t){super("click",e,t)}}class y{initialize(){this.bindClickTriggers()}bindClickTriggers(){const e=document.querySelectorAll('[data-ae-trigger="click"]');Array.from(e).map((e=>new m(e,this.analyticsService))).forEach((e=>e.addEventListener()))}constructor(e){this.analyticsService=e}}var g={randomUUID:"undefined"!=typeof crypto&&crypto.randomUUID&&crypto.randomUUID.bind(crypto)};let f;const p=new Uint8Array(16);function v(){if(!f&&(f="undefined"!=typeof crypto&&crypto.getRandomValues&&crypto.getRandomValues.bind(crypto),!f))throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");return f(p)}const h=[];for(let e=0;e<256;++e)h.push((e+256).toString(16).slice(1));function w(e,t=0){return(h[e[t+0]]+h[e[t+1]]+h[e[t+2]]+h[e[t+3]]+"-"+h[e[t+4]]+h[e[t+5]]+"-"+h[e[t+6]]+h[e[t+7]]+"-"+h[e[t+8]]+h[e[t+9]]+"-"+h[e[t+10]]+h[e[t+11]]+h[e[t+12]]+h[e[t+13]]+h[e[t+14]]+h[e[t+15]]).toLowerCase()}var E=function(e,t,n){if(g.randomUUID&&!t&&!e)return g.randomUUID();const o=(e=e||{}).random||(e.rng||v)();if(o[6]=15&o[6]|64,o[8]=63&o[8]|128,t){n=n||0;for(let e=0;e<16;++e)t[n+e]=o[e];return t}return w(o)};function b(){if(!n("session_id")){t("session_id",E());t("session_count",(parseInt(n("session_count")||"0",10)+1).toString(),{maxAge:2592e3})}}function k(){const e=document.getElementById("cookie-consent-banner"),t=document.getElementById("accept-cookies");"accepted"!==localStorage.getItem("cookie_consent")&&e&&e.classList.remove("hidden"),t&&t.addEventListener("click",(()=>{localStorage.setItem("cookie_consent","accepted"),e&&e.classList.add("hidden")}))}(new class{async initialize(e){const t=new a({useSendBeacon:!1}),n=new a({useSendBeacon:!0}),o=new c,i=new l([t,n,o]);await i.initialize(e);return new y(i).initialize(),Promise.resolve(i)}}).initialize(),function(){const e=n("anonymous_user_id"),o={maxAge:31536e3};t("anonymous_user_id",e||E(),o)}(),b(),function(){let e=null;function n(){e&&clearTimeout(e),e=setTimeout((()=>{var e;t("session_id","",{maxAge:0,...e||{}}),b()}),18e5)}document.addEventListener("mousemove",n),document.addEventListener("mousedown",n),document.addEventListener("keypress",n),document.addEventListener("touchmove",n),document.addEventListener("scroll",n)}(),function(){const e=document.getElementById("subscription-modal"),o=document.getElementById("show-modal"),i=document.querySelector(".close");if(!e||!o||!i)return;const r=parseInt(n("session_count")||"0",10),s="true"===n("subscribed"),a="true"===n("subscribeModalClosed");o.onclick=()=>{e.style.display="block"},i.onclick=()=>{e.style.display="none",t("subscribeModalClosed","true",{maxAge:86400})},window.onclick=t=>{t.target===e&&(e.style.display="none")},document.getElementById("newsletter-form")?.addEventListener("submit",(n=>{n.preventDefault(),t("subscribed","true",{maxAge:31536e3}),e.style.display="none"})),e.style.display=s||a||1!==r&&5!==r?"none":"block"}(),k(),document.addEventListener("DOMContentLoaded",(()=>{const e=window.location.hash.substring(1),t=decodeURIComponent(e)||"Default Title",n=document.getElementById("story-title");n&&(n.textContent=t)}));
+//# sourceMappingURL=index.b5619920.js.map
