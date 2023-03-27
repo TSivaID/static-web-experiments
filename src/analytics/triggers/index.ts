@@ -253,7 +253,23 @@ export class ScrollDepthTrigger extends Trigger {
       if (this.maxDepth > 0) {
         this.analyticsService.trackEvent('scroll_depth', {
           // TODO: get target provider from config
-          mock_api_analytics: { maxDepth: this.maxDepth },
+          mock_api_analytics: { maxDepth: this.maxDepth, eventMethod: 'pagehide' },
+        });
+      }
+    });
+    window.addEventListener('beforeunload', () => {
+      if (this.maxDepth > 0) {
+        this.analyticsService.trackEvent('scroll_depth', {
+          // TODO: get target provider from config
+          mock_api_analytics: { maxDepth: this.maxDepth, eventMethod: 'beforeunload' },
+        });
+      }
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden' && this.maxDepth > 0) {
+        this.analyticsService.trackEvent('scroll_depth', {
+          // TODO: get target provider from config
+          mock_api_analytics: { maxDepth: this.maxDepth, eventMethod: 'visibilitychange:hidden' },
         });
       }
     });
