@@ -13,6 +13,9 @@ export class DummyAnalytics implements IAnalyticsProvider {
   }
 
   async trackEvent(eventName: string, data?: Record<string, unknown>): Promise<void> {
-    logger.info(`DummyAnalytics tracked event: ${eventName} with data: ${JSON.stringify(data)}`);
+    if (data?.dummy_analytics) {
+      logger.info(`DummyAnalytics tracked event: ${eventName} with data: ${JSON.stringify(data)}`);
+    }
+    return Promise.resolve();
   }
 }
