@@ -82,7 +82,10 @@ class TriggerVariablesParser {
    * @returns {CommonVars} Common variables that are available for all events
    */
   private getCommonVars(): CommonVars {
-    return {};
+    return {
+      event_timestamp: new Date().toISOString(),
+      user_agent: window.navigator.userAgent,
+    };
   }
 
   /**
@@ -117,11 +120,11 @@ class TriggerVariablesParser {
 
     const combinedVars: Record<string, unknown> = { ...pageVars, ...eventVars };
 
-    const resultVars: Record<string, unknown> = { ...commonVars };
+    const resultVars: Record<string, unknown> = {};
 
     for (const provider in eventConf.providers) {
       const providerConfig = eventConf.providers[provider];
-      const providerVars: Record<string, unknown> = {};
+      const providerVars: Record<string, unknown> = { ...commonVars };
 
       if (providerConfig.keys) {
         for (const key of providerConfig.keys) {
