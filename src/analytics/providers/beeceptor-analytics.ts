@@ -27,7 +27,7 @@ export class BeeceptorAnalytics implements IAnalyticsProvider {
     const providerData = { ...data.beeceptor_analytics, useSendBeacon: this.useSendBeacon };
 
     if (this.useSendBeacon && navigator.sendBeacon) {
-      const blob = new Blob([JSON.stringify({ eventName, data: providerData })], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify({ eventName, data: providerData })], { type: 'text/plain' });
 
       const success = navigator.sendBeacon(`${this.endpoint}`, blob);
 
@@ -49,6 +49,7 @@ export class BeeceptorAnalytics implements IAnalyticsProvider {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ eventName, data: providerData }),
+          keepalive: true,
         });
         if (!response.ok) {
           logger.error(`BeeceptorAnalytics failed to track event: ${response.statusText}`);
