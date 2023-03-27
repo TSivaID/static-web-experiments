@@ -249,7 +249,7 @@ export class ScrollDepthTrigger extends Trigger {
   }
 
   private trackUnload(): void {
-    window.addEventListener('beforeunload', () => {
+    window.addEventListener('pagehide', () => {
       if (this.maxDepth > 0) {
         this.analyticsService.trackEvent('scroll_depth', {
           // TODO: get target provider from config
