@@ -11,7 +11,8 @@ interface MockApiAnalyticsConfig {
  */
 export class MockApiAnalytics implements IAnalyticsProvider {
   public readonly name = 'MockApiAnalytics';
-  private readonly endpoint: string = 'https://static-web-experiments.free.beeceptor.com/events/';
+  private readonly endpoint: string = 'https://web-experiments.autocode.run/static-web-experiments@dev/';
+  // 'https://static-web-experiments.free.beeceptor.com/events/';
   private readonly useSendBeacon: boolean;
 
   constructor(config?: MockApiAnalyticsConfig) {
