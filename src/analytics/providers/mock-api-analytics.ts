@@ -28,7 +28,7 @@ export class MockApiAnalytics implements IAnalyticsProvider {
     const providerData = { ...data.mock_api_analytics, useSendBeacon: this.useSendBeacon };
 
     if (this.useSendBeacon && navigator.sendBeacon) {
-      const blob = new Blob([JSON.stringify({ eventName, data: providerData })], { type: 'text/plain' });
+      const blob = new Blob([JSON.stringify({ eventName, data: providerData })], { type: 'text/plain;charset=UTF-8' });
 
       const success = navigator.sendBeacon(`${this.endpoint}`, blob);
 
