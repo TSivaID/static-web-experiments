@@ -1,5 +1,6 @@
 import { AnalyticsService } from '../service';
 import { logger } from '../../utils/logger';
+import { getCookie } from '../../utils/cookie';
 
 // enum Triggers {
 //     WINDOW_LOAD = 'load',
@@ -86,6 +87,10 @@ class TriggerVariablesParser {
       event_timestamp: new Date().toISOString(),
       user_agent: window.navigator.userAgent,
       page_url: window.location.href,
+      page_title: document.title,
+      page_referrer: document.referrer,
+      anonynmous_user_id: getCookie('anonymous_user_id'),
+      session_id: getCookie('session_id'),
     };
   }
 
