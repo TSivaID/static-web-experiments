@@ -253,10 +253,10 @@ export class ScrollDepthTrigger extends Trigger {
     }
   }
 
-  private eventConf() {
+  private eventConf(eventMethod: string) {
     const data = {
       name: 'scroll_depth',
-      vars: { max_depth: this.maxDepth, event_method: 'pagehide' },
+      vars: { max_depth: this.maxDepth, event_method: eventMethod },
       // TODO: get target provider from config
       providers: {
         mock_api_analytics: { keys: ['max_depth', 'event_method'] },
@@ -269,17 +269,26 @@ export class ScrollDepthTrigger extends Trigger {
   private trackUnload(): void {
     window.addEventListener('pagehide', () => {
       if (this.maxDepth > 0) {
-        this.analyticsService.trackEvent('scroll_depth', this.triggerVariableParser.getVars(this.eventConf()));
+        this.analyticsService.trackEvent(
+          'scroll_depth',
+          this.triggerVariableParser.getVars(this.eventConf('pagehide'))
+        );
       }
     });
     window.addEventListener('beforeunload', () => {
       if (this.maxDepth > 0) {
-        this.analyticsService.trackEvent('scroll_depth', this.triggerVariableParser.getVars(this.eventConf()));
+        this.analyticsService.trackEvent(
+          'scroll_depth',
+          this.triggerVariableParser.getVars(this.eventConf('beforeunload'))
+        );
       }
     });
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden' && this.maxDepth > 0) {
-        this.analyticsService.trackEvent('scroll_depth', this.triggerVariableParser.getVars(this.eventConf()));
+        this.analyticsService.trackEvent(
+          'scroll_depth',
+          this.triggerVariableParser.getVars(this.eventConf('visibilitychange'))
+        );
       }
     });
   }
