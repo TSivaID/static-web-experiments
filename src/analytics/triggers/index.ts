@@ -258,7 +258,10 @@ export class ScrollDepthTrigger extends Trigger {
       name: 'scroll_depth',
       vars: { max_depth: this.maxDepth, event_method: 'pagehide' },
       // TODO: get target provider from config
-      providers: { mock_api_analytics: { keys: ['max_depth', 'event_method'] } },
+      providers: {
+        mock_api_analytics: { keys: ['max_depth', 'event_method'] },
+        mparticle: { keys: ['max_depth', 'event_method'] },
+      },
     };
     return data;
   }

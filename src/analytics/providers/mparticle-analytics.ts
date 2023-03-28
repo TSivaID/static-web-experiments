@@ -74,7 +74,7 @@ export class MParticleAnalytics implements IAnalyticsProvider {
       logger.info(
         `MParticleAnalytics sending event: ${eventName} with data: ${JSON.stringify(data.mparticle_analytics)}`
       );
-      window.mParticle.logEvent(eventName, 1, data, {});
+      window.mParticle.logEvent(eventName, 1, data.mparticle as Record<string, unknown>, {});
       window.mParticle.upload();
     }
     return Promise.resolve();
