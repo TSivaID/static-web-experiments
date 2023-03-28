@@ -36,6 +36,11 @@ declare let window: IWindow;
 
 export class MParticleAnalytics implements IAnalyticsProvider {
   public readonly name = 'MParticleAnalytics';
+  private shouldForceUpload: boolean;
+
+  constructor(options: Record<string, unknown>) {
+    this.shouldForceUpload = options?.shouldForceUpload === true ? true : false;
+  }
 
   initialize(): void {
     window.mParticle = {
@@ -74,8 +79,9 @@ export class MParticleAnalytics implements IAnalyticsProvider {
       logger.info(
         `MParticleAnalytics sending event: ${eventName} with data: ${JSON.stringify(data.mparticle_analytics)}`
       );
-      window.mParticle.logEvent(eventName, 1, data.mparticle as Record<string, unknown>, {});
-      window.mParticle.upload();
+      const eventData = { ...data.mparticle, shouldForceUpload: this.shouldForceUpload };
+      window.mParticle.logEvent(eventName, 1, eventData, {});
+      if (this.shouldForceUpload) window.mParticle.upload();
     }
     return Promise.resolve();
   }

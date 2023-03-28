@@ -6,7 +6,7 @@ import { TriggerBinder } from './triggers';
 
 export class WebAnalyticsFacade {
   async initialize(options?: Record<string, unknown>): Promise<AnalyticsService> {
-    const mParticleAnalytics = new MParticleAnalytics();
+    const mParticleAnalytics = new MParticleAnalytics({ shouldForceUpload: false });
     const mockApiAnalyticsWithFetch = new MockApiAnalytics({ useSendBeacon: false });
     const mockApiAnalyticsWithSendBeacon = new MockApiAnalytics({ useSendBeacon: true });
     const dummyAnalytics = new DummyAnalytics();
