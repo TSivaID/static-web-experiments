@@ -266,25 +266,37 @@ export class ScrollDepthTrigger extends Trigger {
     return data;
   }
 
+  private trackPageLeave(handlePageLeave: () => void): void {
+    // To track page leave, we need to send the event before the page is unloaded
+    // Work with all browsers for click, form submit, and page leave scenarios
+    // except for browser close or back/forward navigation
+    // Didn't use pagevisibility API because we don't want to track when the page minimized.
+    if ('onpagehide' in window) {
+      window.addEventListener('pagehide', (event) => {
+        // if (!event.persisted) {
+        handlePageLeave();
+        // }
+      });
+    } else {
+      (window as Window).addEventListener('beforeunload', handlePageLeave);
+    }
+  }
+
   private trackUnload(): void {
+    this.trackPageLeave(() => {
+      this.analyticsService.trackEvent('scroll_depth', this.triggerVariableParser.getVars(this.eventConf('pageleave')));
+    });
     window.addEventListener('pagehide', () => {
-      if (this.maxDepth > 0) {
-        this.analyticsService.trackEvent(
-          'scroll_depth',
-          this.triggerVariableParser.getVars(this.eventConf('pagehide'))
-        );
-      }
+      this.analyticsService.trackEvent('scroll_depth', this.triggerVariableParser.getVars(this.eventConf('pagehide')));
     });
     window.addEventListener('beforeunload', () => {
-      if (this.maxDepth > 0) {
-        this.analyticsService.trackEvent(
-          'scroll_depth',
-          this.triggerVariableParser.getVars(this.eventConf('beforeunload'))
-        );
-      }
+      this.analyticsService.trackEvent(
+        'scroll_depth',
+        this.triggerVariableParser.getVars(this.eventConf('beforeunload'))
+      );
     });
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden' && this.maxDepth > 0) {
+      if (document.visibilityState === 'hidden') {
         this.analyticsService.trackEvent(
           'scroll_depth',
           this.triggerVariableParser.getVars(this.eventConf('visibilitychange'))
