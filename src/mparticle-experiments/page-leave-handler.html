@@ -12,8 +12,18 @@
     </header>
 
     <main>
-      <p>Welcome to Static Website Experiments!</p>
-      <a href="index.html">Home</a> - Click "Home" to see the page leave event
+      <h2>Better Event handler for Page Navigation related events</h2>
+      <ul>
+        <li>`pagehide` if browser supported</li>
+        <li>`beforeunload` otherwise</li>
+      </ul>
+      <a id="home-link" href="index.html">Home</a> - Click "Home" to see `click` and `scroll_depth` custom mParticle events
+      <p><strong>Tested browsers:</strong></p>
+      <ul>
+        <li>Chrome</li>
+        <li>Firefox</li>
+        <li>Safari</li>
+        <li>Edge</li>
     </main>
 
     <footer>
@@ -81,6 +91,18 @@
       }
 
       trackPageLeave(handlePageLeave);
+
+      document.getElementById('home-link').addEventListener('click', function () {
+        console.log('home link clicked');
+        mParticle.logEvent('click', mParticle.EventType.Navigation, {
+          event_timestamp: new Date().toISOString(),
+          user_agent: window.navigator.userAgent,
+          page_url: window.location.href,
+          page_title: document.title,
+          page_referrer: document.referrer,
+          event_hanlder: 'home-link-click',
+        });
+      });
     </script>
 
     <script type="module" src="index.ts"></script>
