@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mParticle Experiments</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>mParticle Experiments</h1>
+    </header>
+
+    <main>
+      <p>Welcome to Static Website Experiments!</p>
+      <a href="index.html">Home</a> - Click "Home" to see the page leave event
+    </main>
+
+    <footer>
+      <p>&copy; 2023</p>
+    </footer>
+
+    <script>
+      // Initialize mParticle
+      window.mParticle = {
+        config: {
+          rq: [],
+          appVersion: '1.0.0',
+          customFlags: {},
+          identifyRequest: {
+            userIdentities: {
+              customerid: '',
+              email: '',
+            },
+          },
+          identityCallback: function () {},
+          isDebug: true,
+          isDevelopmentMode: true,
+          isSandbox: true,
+          sessionTimeout: 30,
+          useCookieStorage: true,
+          useNativeSdk: false,
+          ready: function (f) {
+            window.mParticle.config.rq.push(f);
+          },
+        },
+      };
+
+      var el = document.createElement('script');
+      el.async = true;
+      el.src = 'https://jssdkcdns.mparticle.com/js/v2/us1-a9588c0ddc27594cabd152e47ffe27ee/mparticle.js';
+      document.head.appendChild(el);
+
+      function trackPageLeave(handlePageLeave) {
+        // To track page leave, we need to send the event before the page is unloaded
+        // Should Work with all browsers for click, form submit, and page leave scenarios
+        // except for browser/tab close scenarios
+        // Didn't use pagevisibility API because we don't want to track when the page minimized.
+        if ('onpagehide' in window) {
+          window.addEventListener('pagehide', function () {
+            handlePageLeave('pagehide');
+          });
+        } else {
+          window.addEventListener('beforeunload', function () {
+            handlePageLeave('beforeunload');
+          });
+        }
+      }
+
+      function handlePageLeave(eventHandlerName) {
+        // Send the event to mParticle
+        mParticle.logEvent('scroll_depth', mParticle.EventType.Navigation, {
+          event_timestamp: new Date().toISOString(),
+          user_agent: window.navigator.userAgent,
+          page_url: window.location.href,
+          page_title: document.title,
+          page_referrer: document.referrer,
+          scroll_depth: '100%', // always 100% for page leave just for demo purposes
+          event_hanlder: 'pageleave+' + eventHandlerName,
+        });
+      }
+
+      trackPageLeave(handlePageLeave);
+    </script>
+
+    <script type="module" src="index.ts"></script>
+  </body>
+</html>
