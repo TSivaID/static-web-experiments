@@ -7,7 +7,9 @@
     "src/index.html",
     "src/404.html",
     "src/news.html",
-    "src/story.html"
+    "src/story.html",
+    "src/mparticle-experiments/index.html",
+    "src/mparticle-experiments/page-leave-handler.html"
   ],
   "browserslist": "> 0.5%, last 10 versions, not dead",
   "scripts": {
