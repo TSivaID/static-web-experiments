@@ -77,7 +77,7 @@ export interface EventConf {
   };
 }
 
-export class TriggerVariablesParser {
+export class EventsVariablesParser {
   /**
    * Common variables that are available for all events from the Analytics module
    * @returns {CommonVars} Common variables that are available for all events
@@ -177,7 +177,7 @@ abstract class Trigger implements ITrigger {
   name: string;
   selector: EventTarget;
   analyticsService: AnalyticsService;
-  triggerVariableParser = new TriggerVariablesParser();
+  triggerVariableParser = new EventsVariablesParser();
 
   constructor(name: string, element: EventTarget, analyticsService: AnalyticsService) {
     this.name = name;

@@ -1,5 +1,5 @@
 import { AnalyticsService } from './service';
-import { TriggerVariablesParser } from './triggers';
+import { EventsVariablesParser } from './triggers';
 import { EventConf } from './triggers';
 
 interface IWindow extends Window {
@@ -33,14 +33,14 @@ export class DataLayerManager {
     // Process existing events in the data layer
     (window.analyticsDataLayer as Array<Record<string, unknown>>).forEach((eventData: Record<string, unknown>) => {
       const { name, ...data } = eventData;
-      const triggerVariableParser = new TriggerVariablesParser();
+      const triggerVariableParser = new EventsVariablesParser();
       this.analyticsService.trackEvent(name as string, triggerVariableParser.getVars(data as unknown as EventConf));
     });
 
     // Listen for new events in the data layer
     window.addEventListener('analytics-data-layer-update', ((event: CustomEvent) => {
       const { name, ...data } = event.detail;
-      const triggerVariableParser = new TriggerVariablesParser();
+      const triggerVariableParser = new EventsVariablesParser();
       this.analyticsService.trackEvent(name as string, triggerVariableParser.getVars(data));
     }) as EventListener);
   }
