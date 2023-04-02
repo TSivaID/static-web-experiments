@@ -3,6 +3,8 @@ import { DummyAnalytics } from './providers/dummy-analytics';
 import { MParticleAnalytics } from './providers/mparticle-analytics';
 import { AnalyticsService } from './service';
 import { TriggerBinder } from './triggers';
+import { DataLayerManager } from './data-layer-manager';
+import { logger } from '../utils/logger';
 
 export class WebAnalyticsFacade {
   async initialize(options?: Record<string, unknown>): Promise<AnalyticsService> {
@@ -19,6 +21,9 @@ export class WebAnalyticsFacade {
     await analyticsService.initialize(options);
     const triggerBinder = new TriggerBinder(analyticsService);
     triggerBinder.initialize();
+    const dataLayerManager = new DataLayerManager(analyticsService);
+    dataLayerManager.initialize();
+    logger.info('Analytics initialized');
     return Promise.resolve(analyticsService);
   }
 }

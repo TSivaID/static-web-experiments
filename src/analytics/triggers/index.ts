@@ -58,7 +58,7 @@ interface CommonVars {
   }
 }
 */
-interface EventConf {
+export interface EventConf {
   name: string;
   vars?: Record<string, unknown>;
   providers: {
@@ -77,7 +77,7 @@ interface EventConf {
   };
 }
 
-class TriggerVariablesParser {
+export class TriggerVariablesParser {
   /**
    * Common variables that are available for all events from the Analytics module
    * @returns {CommonVars} Common variables that are available for all events
