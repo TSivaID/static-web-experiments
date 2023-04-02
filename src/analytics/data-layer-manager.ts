@@ -1,6 +1,6 @@
 import { AnalyticsService } from './service';
-import { EventsVariablesParser } from './triggers';
-import { EventConf } from './triggers';
+import { EventsVariablesParser } from './events-variables-parser';
+import { EventConf } from './events-variables-parser';
 
 interface IWindow extends Window {
   analyticsDataLayer: DataLayer;
@@ -19,9 +19,11 @@ const originalPush = Array.prototype.push;
 
 export class DataLayerManager {
   protected analyticsService: AnalyticsService;
+  protected eventVariablesParser: EventsVariablesParser;
 
-  constructor(analyticsService: AnalyticsService) {
+  constructor(analyticsService: AnalyticsService, eventVariablesParser: EventsVariablesParser) {
     this.analyticsService = analyticsService;
+    this.eventVariablesParser = eventVariablesParser;
   }
 
   public initialize(): void {
@@ -33,15 +35,13 @@ export class DataLayerManager {
     // Process existing events in the data layer
     (window.analyticsDataLayer as Array<Record<string, unknown>>).forEach((eventData: Record<string, unknown>) => {
       const { name, ...data } = eventData;
-      const triggerVariableParser = new EventsVariablesParser();
-      this.analyticsService.trackEvent(name as string, triggerVariableParser.getVars(data as unknown as EventConf));
+      this.analyticsService.trackEvent(name as string, this.eventVariablesParser.getVars(data as unknown as EventConf));
     });
 
     // Listen for new events in the data layer
     window.addEventListener('analytics-data-layer-update', ((event: CustomEvent) => {
       const { name, ...data } = event.detail;
-      const triggerVariableParser = new EventsVariablesParser();
-      this.analyticsService.trackEvent(name as string, triggerVariableParser.getVars(data));
+      this.analyticsService.trackEvent(name as string, this.eventVariablesParser.getVars(data));
     }) as EventListener);
   }
 

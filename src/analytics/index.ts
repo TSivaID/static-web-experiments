@@ -4,6 +4,7 @@ import { MParticleAnalytics } from './providers/mparticle-analytics';
 import { AnalyticsService } from './service';
 import { TriggerBinder } from './triggers';
 import { DataLayerManager } from './data-layer-manager';
+import { EventsVariablesParser } from './events-variables-parser';
 import { logger } from '../utils/logger';
 
 export class WebAnalyticsFacade {
@@ -19,9 +20,10 @@ export class WebAnalyticsFacade {
       dummyAnalytics,
     ]);
     await analyticsService.initialize(options);
-    const triggerBinder = new TriggerBinder(analyticsService);
+    const eventVariablesParser = new EventsVariablesParser();
+    const triggerBinder = new TriggerBinder(analyticsService, eventVariablesParser);
     triggerBinder.initialize();
-    const dataLayerManager = new DataLayerManager(analyticsService);
+    const dataLayerManager = new DataLayerManager(analyticsService, eventVariablesParser);
     dataLayerManager.initialize();
     logger.info('Analytics initialized');
     return Promise.resolve(analyticsService);
