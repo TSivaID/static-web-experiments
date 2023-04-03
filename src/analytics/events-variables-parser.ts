@@ -1,16 +1,6 @@
 import { getCookie } from '../utils/cookie';
 import { logger } from '../utils/logger';
 
-interface PageVars {
-  vars: {
-    [key: string]: unknown;
-  };
-}
-
-interface CommonVars {
-  [key: string]: unknown;
-}
-
 /*
 {
   "name":"test_click_event",
@@ -56,6 +46,24 @@ export interface EventConf {
       key_mapping?: Record<string, string>;
     };
   };
+}
+
+interface PageVars {
+  vars: {
+    [key: string]: unknown;
+  };
+  // TODO: Add support for triggers from page vars
+  triggers?: {
+    [key: string]: {
+      on?: string;
+      selector?: string;
+      eventConf?: EventConf;
+    };
+  };
+}
+
+interface CommonVars {
+  [key: string]: unknown;
 }
 
 export class EventsVariablesParser {
