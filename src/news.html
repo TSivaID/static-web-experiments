@@ -90,17 +90,17 @@
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </article>
         <article class="card">
-          <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="News 1" />
+          <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="News 5" />
           <h2><a href="story.html#News Article 5">News Article 5</a></h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </article>
         <article class="card">
-          <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="News 2" />
+          <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="News 6" />
           <h2><a href="story.html#News Article 6">News Article 6</a></h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </article>
         <article class="card">
-          <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="News 3" />
+          <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="News 7" />
           <h2><a href="story.html#News Article 7">News Article 7</a></h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </article>
@@ -108,16 +108,18 @@
           class="card"
           data-ae-trigger="element-visible"
           data-event-conf='{
-                "name":"viewed",
+                "name":"element_viewed",
                 "vars": {
                   "key1": "key1_value",
-                  "key2": "key2_value"
+                  "key2": "key2_value",
+                  "render_method": "non-lazy"
                 },
                 "providers": {
                   "dummy_analytics": {
                     "keys": [
                       "key1",
-                      "key2"
+                      "key2",
+                      "render_method"
                     ],
                     "extra_keys": [
                       "page_var1",
@@ -134,13 +136,14 @@
                   "mock_api_analytics": {
                     "keys": [
                       "key1",
-                      "key2"
+                      "key2",
+                      "render_method"
                     ]
                   }
                 }
               }'
         >
-          <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="News 4" />
+          <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="News 8" />
           <h2><a href="story.html#News Article 8">News Article 8</a></h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         </article>

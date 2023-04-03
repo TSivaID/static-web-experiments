@@ -31,16 +31,18 @@ document.addEventListener('DOMContentLoaded', () => {
         data-ae-trigger="element-visible"
         data-ae-observer="once"
         data-event-conf='{
-              "name":"lazy_viewed",
+              "name":"element_viewed",
               "vars": {
                 "key1": "key1_value",
-                "key2": "key2_value"
+                "key2": "key2_value",
+                "render_method": "lazy"
               },
               "providers": {
                 "dummy_analytics": {
                   "keys": [
                     "key1",
-                    "key2"
+                    "key2",
+                    "render_method"
                   ],
                   "extra_keys": [
                     "page_var1",
@@ -57,13 +59,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 "mock_api_analytics": {
                   "keys": [
                     "key1",
-                    "key2"
+                    "key2",
+                    "render_method"
                   ]
                 }
               }
             }'
       >
-        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="News 4" />
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="News 9" />
         <h2><a href="story.html#News Article 9">News Article 9</a></h2>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
       </article>`;
