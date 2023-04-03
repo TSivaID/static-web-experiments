@@ -98,6 +98,12 @@ export class ElementVisibleTrigger extends Trigger {
     } else {
       const vars = this.eventVariablesParser.getVars(eventConfObj);
       this.analyticsService.trackEvent(eventConfObj.name, vars);
+
+      // Stop observing the element once it's visible
+      if (entry.intersectionRatio === 1.0 && this.observer) {
+        this.observer.unobserve(entry.target);
+        this.observer.disconnect();
+      }
     }
   }
 
