@@ -49,7 +49,7 @@ abstract class Trigger implements ITrigger {
     this.selector.removeEventListener(this.name, this.handler.bind(this));
   }
 
-  public getEventConf(eventConf: string): EventConf | undefined {
+  public parseEventConf(eventConf: string): EventConf | undefined {
     if (!eventConf) {
       logger.error(`No eventConf found for ${this.name} trigger`);
       return undefined;
@@ -72,7 +72,7 @@ export class ClickTrigger extends Trigger {
 
   handler(event: Event): void {
     const eventConf = (event?.currentTarget as HTMLElement)?.dataset?.eventConf as string;
-    const eventConfObj = this.getEventConf(eventConf);
+    const eventConfObj = this.parseEventConf(eventConf);
     if (!eventConfObj) {
       return;
     } else {
