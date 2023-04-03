@@ -24,4 +24,57 @@ document.addEventListener('DOMContentLoaded', () => {
   if (storyTitleElement) {
     storyTitleElement.textContent = title;
   }
+
+  setTimeout(() => {
+    const html = `<article
+        class="card"
+        data-ae-trigger="element-visible"
+        data-ae-observer="once"
+        data-event-conf='{
+              "name":"lazy_viewed",
+              "vars": {
+                "key1": "key1_value",
+                "key2": "key2_value"
+              },
+              "providers": {
+                "dummy_analytics": {
+                  "keys": [
+                    "key1",
+                    "key2"
+                  ],
+                  "extra_keys": [
+                    "page_var1",
+                    "page_var2"
+                  ],
+                  "exclude_keys": [
+                    "common_var1"
+                  ],
+                  "key_mapping": {
+                    "key1": "key1_name",
+                    "key2": "key2_name"
+                  }
+                },
+                "mock_api_analytics": {
+                  "keys": [
+                    "key1",
+                    "key2"
+                  ]
+                }
+              }
+            }'
+      >
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="News 4" />
+        <h2><a href="story.html#News Article 9">News Article 9</a></h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      </article>`;
+
+    // get this selector .card-container
+    const cardContainer = document.querySelector('.card-container');
+    if (cardContainer) {
+      // create a new element using the html string
+      const cardElement = document.createRange().createContextualFragment(html);
+      // append the new element to the card container
+      cardContainer.appendChild(cardElement);
+    }
+  }, 2000);
 });

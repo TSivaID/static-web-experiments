@@ -237,5 +237,39 @@ export class TriggerBinder {
       (element) => new ElementVisibleTrigger(element, this.analyticsService, this.eventVariablesParser)
     );
     elementVisibleTriggers.forEach((trigger) => trigger.addEventListener());
+    this.watchForNewElements(
+      '[data-ae-trigger="element-visible"][data-ae-observer="once"], [data-ae-trigger="element-visible"][data-ae-observer="forever"]'
+    );
+  }
+
+  // To bind triggers to dynamically added elements
+  public bindElementVisibleTriggersFor(selector: string | Element[]): void {
+    const elementVisibleTriggerElements = typeof selector === 'string' ? document.querySelectorAll(selector) : selector;
+
+    const elementVisibleTriggers = Array.from(elementVisibleTriggerElements).map(
+      (element) => new ElementVisibleTrigger(element, this.analyticsService, this.eventVariablesParser)
+    );
+    elementVisibleTriggers.forEach((trigger) => trigger.addEventListener());
+  }
+
+  // Method to set up a MutationObserver to watch for new elements
+  public watchForNewElements(selector: string): void {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+          mutation.addedNodes.forEach((node) => {
+            if (node instanceof HTMLElement) {
+              const matchingElements = node.matches(selector) ? [node] : Array.from(node.querySelectorAll(selector));
+
+              if (matchingElements.length > 0) {
+                this.bindElementVisibleTriggersFor(matchingElements);
+              }
+            }
+          });
+        }
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
   }
 }
