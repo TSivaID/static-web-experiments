@@ -39,7 +39,7 @@ abstract class Trigger implements ITrigger {
     this.eventVariablesParser = eventVariablesParser;
   }
 
-  abstract handler(event: Event): void;
+  abstract handler(event: Event | IntersectionObserverEntry): void;
 
   public addEventListener() {
     this.selector.addEventListener(this.name, this.handler.bind(this));
@@ -78,6 +78,54 @@ export class ClickTrigger extends Trigger {
     } else {
       const vars = this.eventVariablesParser.getVars(eventConfObj);
       this.analyticsService.trackEvent(eventConfObj.name, vars);
+    }
+  }
+}
+
+export class ElementVisibleTrigger extends Trigger {
+  private observer: IntersectionObserver | null;
+
+  constructor(element: Element, analyticsService: AnalyticsService, eventVariablesParser: EventsVariablesParser) {
+    super('visibility', element, analyticsService, eventVariablesParser);
+    this.observer = null;
+  }
+
+  handler(entry: IntersectionObserverEntry): void {
+    const eventConf = (entry.target as HTMLElement).dataset.eventConf as string;
+    const eventConfObj = this.parseEventConf(eventConf);
+    if (!eventConfObj) {
+      return;
+    } else {
+      const vars = this.eventVariablesParser.getVars(eventConfObj);
+      this.analyticsService.trackEvent(eventConfObj.name, vars);
+    }
+  }
+
+  public addEventListener(): void {
+    if (!this.selector) return;
+
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            this.handler(entry);
+            if (this.observer) {
+              this.observer.unobserve(entry.target);
+            }
+          }
+        });
+      },
+      {
+        threshold: 1.0,
+      }
+    );
+
+    this.observer.observe(this.selector as Element);
+  }
+
+  public removeEventListener(): void {
+    if (this.observer) {
+      this.observer.disconnect();
     }
   }
 }
@@ -172,6 +220,7 @@ export class TriggerBinder {
   initialize() {
     this.bindClickTriggers();
     new ScrollDepthTrigger(true, this.analyticsService, this.eventVariablesParser).initialize();
+    this.bindElementVisibleTriggers();
   }
 
   private bindClickTriggers() {
@@ -180,5 +229,13 @@ export class TriggerBinder {
       (element) => new ClickTrigger(element, this.analyticsService, this.eventVariablesParser)
     );
     clickTriggers.forEach((trigger) => trigger.addEventListener());
+  }
+
+  private bindElementVisibleTriggers() {
+    const elementVisibleTriggerElements = document.querySelectorAll('[data-ae-trigger="element-visible"]');
+    const elementVisibleTriggers = Array.from(elementVisibleTriggerElements).map(
+      (element) => new ElementVisibleTrigger(element, this.analyticsService, this.eventVariablesParser)
+    );
+    elementVisibleTriggers.forEach((trigger) => trigger.addEventListener());
   }
 }
