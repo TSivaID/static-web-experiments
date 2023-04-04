@@ -229,42 +229,6 @@ export class TriggerBinder {
     this.bindElementVisibleTriggers();
   }
 
-  private bindClickTriggers() {
-    const clickTriggerElements = document.querySelectorAll('[data-ae-trigger="click"]');
-    const clickTriggers = Array.from(clickTriggerElements).map(
-      (element) => new ClickTrigger(element, this.analyticsService, this.eventVariablesParser)
-    );
-    clickTriggers.forEach((trigger) => trigger.addEventListener());
-  }
-
-  private bindElementVisibleTriggers() {
-    this.bindElementVisibleTriggersFor('[data-ae-trigger="visible"]');
-    this.watchForNewElements(
-      // document.body,
-      '[data-ae-observer="once"]',
-      '[data-ae-trigger="lazy-element-visible"]',
-      this.bindElementVisibleTriggersFor.bind(this),
-      true
-    );
-    this.watchForNewElements(
-      // document.body,
-      '[data-ae-observer="forever"]',
-      '[data-ae-trigger="lazy-element-visible"]',
-      this.bindElementVisibleTriggersFor.bind(this),
-      false
-    );
-  }
-
-  // To bind triggers to dynamically added elements
-  private bindElementVisibleTriggersFor(selector: string | Element[]): void {
-    const elementVisibleTriggerElements = typeof selector === 'string' ? document.querySelectorAll(selector) : selector;
-
-    const elementVisibleTriggers = Array.from(elementVisibleTriggerElements).map(
-      (element) => new ElementVisibleTrigger(element, this.analyticsService, this.eventVariablesParser)
-    );
-    elementVisibleTriggers.forEach((trigger) => trigger.addEventListener());
-  }
-
   // Method to set up a MutationObserver to watch for new elements
   private watchForNewElements(
     parentSelector: string | Element,
@@ -300,5 +264,57 @@ export class TriggerBinder {
     }
     const observer = new MutationObserver(observerCallback);
     observer.observe(parent, { childList: true, subtree: true });
+  }
+
+  private bindClickTriggers() {
+    this.bindClickTriggersFor('[data-ae-trigger="click"]');
+    this.watchForNewElements(
+      '[data-ae-observer="once"]',
+      '[data-ae-trigger="lazy-element-click"]',
+      this.bindClickTriggersFor.bind(this),
+      true
+    );
+    this.watchForNewElements(
+      '[data-ae-observer="forever"]',
+      '[data-ae-trigger="lazy-element-click"]',
+      this.bindClickTriggersFor.bind(this),
+      false
+    );
+  }
+
+  private bindClickTriggersFor(selector: string | Element[]): void {
+    const clickTriggerElements = typeof selector === 'string' ? document.querySelectorAll(selector) : selector;
+    const clickTriggers = Array.from(clickTriggerElements).map(
+      (element) => new ClickTrigger(element, this.analyticsService, this.eventVariablesParser)
+    );
+    clickTriggers.forEach((trigger) => trigger.addEventListener());
+  }
+
+  private bindElementVisibleTriggers() {
+    this.bindElementVisibleTriggersFor('[data-ae-trigger="visible"]');
+    this.watchForNewElements(
+      // document.body,
+      '[data-ae-observer="once"]',
+      '[data-ae-trigger="lazy-element-visible"]',
+      this.bindElementVisibleTriggersFor.bind(this),
+      true
+    );
+    this.watchForNewElements(
+      // document.body,
+      '[data-ae-observer="forever"]',
+      '[data-ae-trigger="lazy-element-visible"]',
+      this.bindElementVisibleTriggersFor.bind(this),
+      false
+    );
+  }
+
+  // To bind triggers to dynamically added elements
+  private bindElementVisibleTriggersFor(selector: string | Element[]): void {
+    const elementVisibleTriggerElements = typeof selector === 'string' ? document.querySelectorAll(selector) : selector;
+
+    const elementVisibleTriggers = Array.from(elementVisibleTriggerElements).map(
+      (element) => new ElementVisibleTrigger(element, this.analyticsService, this.eventVariablesParser)
+    );
+    elementVisibleTriggers.forEach((trigger) => trigger.addEventListener());
   }
 }
