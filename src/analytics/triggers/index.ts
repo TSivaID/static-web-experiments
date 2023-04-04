@@ -136,6 +136,22 @@ export class ElementVisibleTrigger extends Trigger {
   }
 }
 
+export class CustomEventTrigger extends Trigger {
+  constructor(selector: EventTarget, analyticsService: AnalyticsService, eventVariablesParser: EventsVariablesParser) {
+    super('custom-event', selector, analyticsService, eventVariablesParser);
+  }
+
+  handler(event: CustomEvent): void {
+    const eventConfObj = event?.detail;
+    if (!eventConfObj) {
+      return;
+    } else {
+      const vars = this.eventVariablesParser.getVars(eventConfObj);
+      this.analyticsService.trackEvent(eventConfObj.name, vars);
+    }
+  }
+}
+
 export class ScrollDepthTrigger extends Trigger {
   private maxDepth: number;
   protected shouldEnable: boolean;
@@ -227,6 +243,7 @@ export class TriggerBinder {
     this.bindClickTriggers();
     new ScrollDepthTrigger(true, this.analyticsService, this.eventVariablesParser).initialize();
     this.bindElementVisibleTriggers();
+    new CustomEventTrigger(document, this.analyticsService, this.eventVariablesParser).addEventListener();
   }
 
   // Method to set up a MutationObserver to watch for new elements
