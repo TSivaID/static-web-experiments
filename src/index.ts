@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const html = `<article
         class="card"
         data-ae-trigger="lazy-element-visible"
-        data-event-conf='{
+        data-ae-conf='{
               "name":"element_viewed",
               "vars": {
                 "key1": "key1_value",

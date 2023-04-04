@@ -71,7 +71,7 @@ export class ClickTrigger extends Trigger {
   }
 
   handler(event: Event): void {
-    const eventConf = (event?.currentTarget as HTMLElement)?.dataset?.eventConf as string;
+    const eventConf = (event?.currentTarget as HTMLElement)?.dataset?.aeConf as string;
     const eventConfObj = this.parseEventConf(eventConf);
     if (!eventConfObj) {
       return;
@@ -91,7 +91,7 @@ export class ElementVisibleTrigger extends Trigger {
   }
 
   handler(entry: IntersectionObserverEntry): void {
-    const eventConf = (entry.target as HTMLElement).dataset.eventConf as string;
+    const eventConf = (entry.target as HTMLElement).dataset?.aeConf as string;
     const eventConfObj = this.parseEventConf(eventConf);
     if (!eventConfObj) {
       return;
