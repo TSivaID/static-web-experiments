@@ -234,8 +234,11 @@ export class TriggerBinder {
     parentSelector: string | Element,
     lazySelector: string,
     bindTrigger: (matchingElements: Element[]) => void,
-    disconnectAfterFirstMatch = true
+    disconnectAfterFirstMatch = true,
+    timeout = 3 * 60 * 1000 // duration in milliseconds, default: 3 minutes = 3 * 60 * 1000 = 180000
   ): void {
+    let elementFound = false;
+
     const observerCallback = (mutationsList: MutationRecord[], observer: MutationObserver) => {
       for (const mutation of mutationsList) {
         if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
@@ -246,6 +249,7 @@ export class TriggerBinder {
                 : Array.from(node.querySelectorAll(lazySelector));
 
               if (matchingElements.length > 0) {
+                elementFound = true;
                 bindTrigger(matchingElements);
                 if (disconnectAfterFirstMatch) {
                   observer.disconnect(); // Disconnect the observer when the element is found
@@ -257,6 +261,7 @@ export class TriggerBinder {
         }
       }
     };
+
     const parent = typeof parentSelector === 'string' ? document.querySelector(parentSelector) : parentSelector;
     if (!parent) {
       logger.warn(`Could not find parent element for selector: ${parentSelector}`);
@@ -264,18 +269,26 @@ export class TriggerBinder {
     }
     const observer = new MutationObserver(observerCallback);
     observer.observe(parent, { childList: true, subtree: true });
+
+    // Set a timeout to disconnect the observer if the element is not found within the specified duration
+    setTimeout(() => {
+      if (!elementFound) {
+        observer.disconnect();
+        logger.warn(`Element not found within the specified duration: ${timeout}ms`);
+      }
+    }, timeout);
   }
 
   private bindClickTriggers() {
     this.bindClickTriggersFor('[data-ae-trigger="click"]');
     this.watchForNewElements(
-      '[data-ae-observer="once"]',
+      '[data-ae-observer="single-click"]',
       '[data-ae-trigger="lazy-element-click"]',
       this.bindClickTriggersFor.bind(this),
       true
     );
     this.watchForNewElements(
-      '[data-ae-observer="forever"]',
+      '[data-ae-observer="multi-click"]',
       '[data-ae-trigger="lazy-element-click"]',
       this.bindClickTriggersFor.bind(this),
       false
@@ -294,14 +307,14 @@ export class TriggerBinder {
     this.bindElementVisibleTriggersFor('[data-ae-trigger="visible"]');
     this.watchForNewElements(
       // document.body,
-      '[data-ae-observer="once"]',
+      '[data-ae-observer="single-visible"]',
       '[data-ae-trigger="lazy-element-visible"]',
       this.bindElementVisibleTriggersFor.bind(this),
       true
     );
     this.watchForNewElements(
       // document.body,
-      '[data-ae-observer="forever"]',
+      '[data-ae-observer="multi-visible"]',
       '[data-ae-trigger="lazy-element-visible"]',
       this.bindElementVisibleTriggersFor.bind(this),
       false
