@@ -240,7 +240,8 @@ export class TriggerBinder {
   private bindElementVisibleTriggers() {
     this.bindElementVisibleTriggersFor('[data-ae-trigger="element-visible"]');
     this.watchForNewElements(
-      '[data-ae-trigger="element-visible"][data-ae-observer="once"], [data-ae-trigger="element-visible"][data-ae-observer="forever"]'
+      '[data-ae-trigger="element-visible"][data-ae-observer="once"], [data-ae-trigger="element-visible"][data-ae-observer="forever"]',
+      this.bindElementVisibleTriggersFor.bind(this)
     );
   }
 
@@ -255,7 +256,7 @@ export class TriggerBinder {
   }
 
   // Method to set up a MutationObserver to watch for new elements
-  private watchForNewElements(selector: string): void {
+  private watchForNewElements(selector: string, bindTrigger: (matchingElements: Element[]) => void): void {
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
@@ -264,7 +265,7 @@ export class TriggerBinder {
               const matchingElements = node.matches(selector) ? [node] : Array.from(node.querySelectorAll(selector));
 
               if (matchingElements.length > 0) {
-                this.bindElementVisibleTriggersFor(matchingElements);
+                bindTrigger(matchingElements);
               }
             }
           });
