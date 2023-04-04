@@ -258,7 +258,7 @@ export class TriggerBinder {
 
   // Method to set up a MutationObserver to watch for new elements
   private watchForNewElements(
-    parentSelector: Element,
+    parentSelector: string | Element,
     lazySelector: string,
     bindTrigger: (matchingElements: Element[]) => void
   ): void {
@@ -279,7 +279,11 @@ export class TriggerBinder {
         }
       });
     });
-
-    observer.observe(parentSelector, { childList: true, subtree: true });
+    const parent = typeof parentSelector === 'string' ? document.querySelector(parentSelector) : parentSelector;
+    if (!parent) {
+      logger.warn(`Could not find parent element for selector: ${parentSelector}`);
+      return;
+    }
+    observer.observe(parent, { childList: true, subtree: true });
   }
 }
