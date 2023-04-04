@@ -28,8 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     const html = `<article
         class="card"
-        data-ae-trigger="element-visible"
-        data-ae-observer="once"
+        data-ae-trigger="lazy-element-visible"
         data-event-conf='{
               "name":"element_viewed",
               "vars": {
