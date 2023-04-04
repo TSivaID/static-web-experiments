@@ -272,7 +272,7 @@ export class TriggerBinder {
     bindTrigger: (matchingElements: Element[]) => void,
     disconnectAfterFirstMatch = true
   ): void {
-    const observerCallback = (mutationsList, observer) => {
+    const observerCallback = (mutationsList: MutationRecord[], observer: MutationObserver) => {
       for (const mutation of mutationsList) {
         if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
           for (const node of mutation.addedNodes) {
