@@ -243,13 +243,15 @@ export class TriggerBinder {
       // document.body,
       '[data-ae-observer="once"]',
       '[data-ae-trigger="lazy-element-visible"]',
-      this.bindElementVisibleTriggersFor.bind(this)
+      this.bindElementVisibleTriggersFor.bind(this),
+      true
     );
     this.watchForNewElements(
       // document.body,
       '[data-ae-observer="forever"]',
       '[data-ae-trigger="lazy-element-visible"]',
-      this.bindElementVisibleTriggersFor.bind(this)
+      this.bindElementVisibleTriggersFor.bind(this),
+      false
     );
   }
 
@@ -267,12 +269,13 @@ export class TriggerBinder {
   private watchForNewElements(
     parentSelector: string | Element,
     lazySelector: string,
-    bindTrigger: (matchingElements: Element[]) => void
+    bindTrigger: (matchingElements: Element[]) => void,
+    disconnectAfterFirstMatch = true
   ): void {
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
+    const observerCallback = (mutationsList, observer) => {
+      for (const mutation of mutationsList) {
         if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-          mutation.addedNodes.forEach((node) => {
+          for (const node of mutation.addedNodes) {
             if (node instanceof HTMLElement) {
               const matchingElements = node.matches(lazySelector)
                 ? [node]
@@ -280,17 +283,22 @@ export class TriggerBinder {
 
               if (matchingElements.length > 0) {
                 bindTrigger(matchingElements);
+                if (disconnectAfterFirstMatch) {
+                  observer.disconnect(); // Disconnect the observer when the element is found
+                  break;
+                }
               }
             }
-          });
+          }
         }
-      });
-    });
+      }
+    };
     const parent = typeof parentSelector === 'string' ? document.querySelector(parentSelector) : parentSelector;
     if (!parent) {
       logger.warn(`Could not find parent element for selector: ${parentSelector}`);
       return;
     }
+    const observer = new MutationObserver(observerCallback);
     observer.observe(parent, { childList: true, subtree: true });
   }
 }
