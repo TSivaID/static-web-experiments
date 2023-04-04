@@ -240,7 +240,14 @@ export class TriggerBinder {
   private bindElementVisibleTriggers() {
     this.bindElementVisibleTriggersFor('[data-ae-trigger="visible"]');
     this.watchForNewElements(
-      document.body,
+      // document.body,
+      '[data-ae-observer="once"]',
+      '[data-ae-trigger="lazy-element-visible"]',
+      this.bindElementVisibleTriggersFor.bind(this)
+    );
+    this.watchForNewElements(
+      // document.body,
+      '[data-ae-observer="forever"]',
       '[data-ae-trigger="lazy-element-visible"]',
       this.bindElementVisibleTriggersFor.bind(this)
     );
